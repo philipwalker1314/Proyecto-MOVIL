@@ -18,14 +18,15 @@ class TransactionListActivity : AppCompatActivity() {
         listTransactions = findViewById(R.id.listTransactions)
         btnBack = findViewById(R.id.btnBack)
 
-        // Lista de ejemplo
+// Example list
         val transactions = listOf("💰 Salary +₡800", "🛒 Supermarket -₡50", "🎬 Entertainment -₡30", "☕ Coffee -₡10")
 
-        // Adaptador simple para mostrar la lista
+        // Simple adapter to display the list
+
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, transactions)
         listTransactions.adapter = adapter
 
-        // Botón volver
+// Back button
         btnBack.setOnClickListener {
             finish()
         }

@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Enlazamos los elementos del layout
+        // We link the design elements.
         tvBalance = findViewById(R.id.tvBalance)
         tvIncomeAmount = findViewById(R.id.tvIncomeAmount)
         tvExpenseAmount = findViewById(R.id.tvExpenseAmount)
@@ -27,21 +27,23 @@ class MainActivity : AppCompatActivity() {
         btnAddExpense = findViewById(R.id.btnAddExpense)
         btnViewStatistics = findViewById(R.id.btnViewStatistics)
 
-        // Botón para agregar ingreso
+        // Button to add entry
+
         btnAddIncome.setOnClickListener {
             val intent = Intent(this, AddTransactionActivity::class.java)
             intent.putExtra("type", "income")
             startActivity(intent)
         }
 
-        // Botón para agregar gasto
+        // Button to add expense
         btnAddExpense.setOnClickListener {
             val intent = Intent(this, AddTransactionActivity::class.java)
             intent.putExtra("type", "expense")
             startActivity(intent)
         }
 
-        // Botón para ver estadísticas
+        // Button to view statistics
+
         btnViewStatistics.setOnClickListener {
             val intent = Intent(this, StatisticsActivity::class.java)
             startActivity(intent)

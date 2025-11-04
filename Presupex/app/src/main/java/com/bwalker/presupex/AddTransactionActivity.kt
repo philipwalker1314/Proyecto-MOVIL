@@ -17,7 +17,8 @@ class AddTransactionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_transaction)
 
-        // Enlazar los componentes del XML
+        // Link the XML components
+
         etAmount = findViewById(R.id.etAmount)
         spCategory = findViewById(R.id.spCategory)
         etDate = findViewById(R.id.etDate)
@@ -25,12 +26,14 @@ class AddTransactionActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSave)
         btnBackForm = findViewById(R.id.btnBackForm)
 
-        // Configurar Spinner con categorías simples
+        // Configure Spinner with simple categories
+
         val categories = arrayOf("Salary", "Food", "Entertainment", "Transport")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
         spCategory.adapter = adapter
 
-        // Botón para guardar (aún sin lógica de base de datos)
+        // Save button (without database logic yet)
+
         btnSave.setOnClickListener {
             val amountText = etAmount.text.toString()
             val description = etDescription.text.toString()
@@ -43,7 +46,8 @@ class AddTransactionActivity : AppCompatActivity() {
             }
         }
 
-        // Botón para volver atrás
+        // Back button
+
         btnBackForm.setOnClickListener {
             finish()
         }
