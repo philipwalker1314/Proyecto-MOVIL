@@ -12,6 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Presupex">
         <activity
+            android:name=".StatisticsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_statistics"
+            android:theme="@style/Theme.Presupex" />
+        <activity
+            android:name=".AddTransactionActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_transaction"
+            android:theme="@style/Theme.Presupex" />
+        <activity
+            android:name=".TransactionListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_transaction_list"
+            android:theme="@style/Theme.Presupex" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

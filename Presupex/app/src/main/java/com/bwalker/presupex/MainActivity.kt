@@ -1,47 +1,52 @@
 package com.bwalker.presupex
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.bwalker.presupex.ui.theme.PresupexTheme
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var tvBalance: TextView
+    private lateinit var tvIncomeAmount: TextView
+    private lateinit var tvExpenseAmount: TextView
+    private lateinit var btnAddIncome: Button
+    private lateinit var btnAddExpense: Button
+    private lateinit var btnViewStatistics: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            PresupexTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+        setContentView(R.layout.activity_main)
+
+        // We link the design elements.
+        tvBalance = findViewById(R.id.tvBalance)
+        tvIncomeAmount = findViewById(R.id.tvIncomeAmount)
+        tvExpenseAmount = findViewById(R.id.tvExpenseAmount)
+        btnAddIncome = findViewById(R.id.btnAddIncome)
+        btnAddExpense = findViewById(R.id.btnAddExpense)
+        btnViewStatistics = findViewById(R.id.btnViewStatistics)
+
+        // Button to add entry
+
+        btnAddIncome.setOnClickListener {
+            val intent = Intent(this, AddTransactionActivity::class.java)
+            intent.putExtra("type", "income")
+            startActivity(intent)
         }
-    }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+        // Button to add expense
+        btnAddExpense.setOnClickListener {
+            val intent = Intent(this, AddTransactionActivity::class.java)
+            intent.putExtra("type", "expense")
+            startActivity(intent)
+        }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PresupexTheme {
-        Greeting("Android")
+        // Button to view statistics
+
+        btnViewStatistics.setOnClickListener {
+            val intent = Intent(this, StatisticsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

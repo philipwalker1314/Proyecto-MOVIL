@@ -1,3 +1,33 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Presupex</string>
+    <string name="title_activity_transaction_list">TransactionListActivity</string>
+    <string name="title_activity_add_transaction">AddTransactionActivity</string>
+    <string name="title_activity_statistics">StatisticsActivity</string>
+    <!-- Dashboard -->
+    <string name="total_balance">Total Balance</string>
+    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="add_income">Add Income</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="view_statistics">View Statistics</string>
+
+    <!-- Add Transaction -->
+    <string name="add_transaction">Add Transaction</string>
+    <string name="hint_amount">Amount (e.g. 100)</string>
+    <string name="hint_date">Date (dd/mm/yyyy)</string>
+    <string name="hint_description">Description</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+
+    <!-- Transactions List -->
+    <string name="transactions_title">Transactions</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Statistics</string>
+    <string name="stat_income">Income: ₡1,200.00</string>
+    <string name="stat_expense">Expenses: ₡950.00</string>
+
+    <!-- Toast messages -->
+    <string name="msg_fill_fields">Please fill in all fields</string>
+    <string name="msg_saved">Transaction saved</string>
 </resources>
