@@ -2,28 +2,49 @@ package com.bwalker.presupex.manager
 
 import com.bwalker.presupex.data.TransactionEntity
 
-// Esta clase guarda todas las transacciones
+// This class stores all transactions in memory (temporary database)
 class MemoryDataManager : DataManager {
-    // Lista privada donde se guardan las transac
+
+    // Private list that holds all transactions
     private val transactions = mutableListOf<TransactionEntity>()
-    // Agrega una nueva transacción a la lista
+
+    // Add a new transaction
     override fun addTransaction(transaction: TransactionEntity) {
         transactions.add(transaction)
     }
-    // Devuelve todas las transacciones guardadas
+
+    // Return all saved transactions
     override fun getAllTransactions(): List<TransactionEntity> {
         return transactions
     }
-    // Calcula el total de ingresos sumando los amount donde type = "ingreso"
+
+    // Update an existing transaction by ID
+    fun updateTransaction(updated: TransactionEntity) {
+        val index = transactions.indexOfFirst { it.id == updated.id }
+        if (index != -1) {
+            transactions[index] = updated
+        }
+    }
+
+    // Delete a transaction by ID
+    fun deleteTransaction(id: Int) {
+        val index = transactions.indexOfFirst { it.id == id }
+        if (index != -1) {
+            transactions.removeAt(index)
+        }
+    }
+
+    // Calculate total income
     override fun getTotalIngresos(): Double {
         return transactions
-            .filter { it.type == "ing   reso" }
+            .filter { it.type == "income" }
             .sumOf { it.amount }
     }
-    // Calcula el total de gastos sumando los amount donde type = "gasto"
+
+    // Calculate total expenses
     override fun getTotalGastos(): Double {
         return transactions
-            .filter { it.type == "gasto" }
+            .filter { it.type == "expense" }
             .sumOf { it.amount }
     }
 }
