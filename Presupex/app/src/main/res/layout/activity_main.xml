@@ -131,4 +131,15 @@
         android:layout_marginTop="10dp"
         android:textAllCaps="false" />
 
+    <Button
+        android:id="@+id/btnViewPhotoHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/view_photo_history"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#4FC3F7"
+        android:textAllCaps="false" />
+
+
+
 </LinearLayout>

@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bwalker.presupex.controller.TransactionController
-import com.bwalker.presupex.manager.MemoryDataManager
 import com.bwalker.presupex.util.Util
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnAddExpense: Button
     private lateinit var btnViewStatistics: Button
     private lateinit var btnViewTransactions: Button
+    private lateinit var btnViewPhotoHistory: Button   // NEW BUTTON
 
     private lateinit var controller: TransactionController
 
@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         btnAddExpense = findViewById(R.id.btnAddExpense)
         btnViewStatistics = findViewById(R.id.btnViewStatistics)
         btnViewTransactions = findViewById(R.id.btnViewTransactions)
+        btnViewPhotoHistory = findViewById(R.id.btnViewPhotoHistory) // NEW
 
         // Initialize controller
         controller = TransactionController(DataProvider.sharedDataManager)
@@ -52,25 +53,31 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // ✅ View Transactions button (kept one)
+        // View old ListView-based transaction list
         btnViewTransactions.setOnClickListener {
             val intent = Intent(this, TransactionListActivity::class.java)
             startActivity(intent)
         }
 
-        // View Statistics button
+        // View Statistics
         btnViewStatistics.setOnClickListener {
             val intent = Intent(this, StatisticsActivity::class.java)
             startActivity(intent)
         }
 
-        // Load dashboard info
+        // NEW: View RecyclerView-based list with photos
+        btnViewPhotoHistory.setOnClickListener {
+            val intent = Intent(this, TransactionRecyclerActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Load dashboard values
         updateDashboard()
     }
 
     override fun onResume() {
         super.onResume()
-        // Update values when returning
+        // Update values when returning from child activities
         updateDashboard()
     }
 
