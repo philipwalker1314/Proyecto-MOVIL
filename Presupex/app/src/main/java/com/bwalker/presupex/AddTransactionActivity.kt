@@ -1,8 +1,12 @@
 package com.bwalker.presupex
 
 import android.app.DatePickerDialog
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.bwalker.presupex.controller.TransactionController
 import com.bwalker.presupex.data.TransactionEntity
@@ -19,14 +23,29 @@ class AddTransactionActivity : AppCompatActivity() {
     private lateinit var btnBackForm: Button
     private lateinit var tvAddTitle: TextView
 
+    private lateinit var imgPreview: ImageView
+    private lateinit var btnSelectImage: Button
+
     private lateinit var controller: TransactionController
     private var editingTransaction: TransactionEntity? = null
+
+    private var selectedImage: Bitmap? = null
+
+    // Gallery launcher
+    private val galleryLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            selectedImage = bitmap
+            imgPreview.setImageBitmap(bitmap)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_transaction)
 
-        // Use shared in-memory data
         controller = TransactionController(DataProvider.sharedDataManager)
 
         // Link UI components
@@ -38,21 +57,43 @@ class AddTransactionActivity : AppCompatActivity() {
         btnBackForm = findViewById(R.id.btnBackForm)
         tvAddTitle = findViewById(R.id.tvAddTitle)
 
-        // Configure Spinner with simple categories
+        imgPreview = findViewById(R.id.imgPreview)
+        btnSelectImage = findViewById(R.id.btnSelectImage)
+
+        // Spinner categories
         val categories = arrayOf("Salary", "Food", "Entertainment", "Transport", "Other")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spCategory.adapter = adapter
 
-        // Date picker setup
+        // Date picker
         etDate.setOnClickListener { showDatePickerDialog() }
 
-        // Check if we are editing an existing transaction
+        // Edit mode check
         val isEditMode = intent.hasExtra("transaction_id")
         if (isEditMode) {
             tvAddTitle.text = getString(R.string.edit_transaction)
-            // In a real DB, we'd load by ID, but for now leave as placeholder
-            Toast.makeText(this, "Edit mode", Toast.LENGTH_SHORT).show()
+
+            val id = intent.getIntExtra("transaction_id", -1)
+            val allTransactions = controller.getAllTransactions()
+            editingTransaction = allTransactions.find { it.id == id }
+
+            editingTransaction?.let { t ->
+                etAmount.setText(t.amount.toString())
+                etDescription.setText(t.description)
+                etDate.setText(t.date)
+
+                val index = categories.indexOf(t.category)
+                if (index != -1) spCategory.setSelection(index)
+
+                selectedImage = t.image
+                imgPreview.setImageBitmap(t.image)
+            }
+        }
+
+        // Image selector
+        btnSelectImage.setOnClickListener {
+            galleryLauncher.launch("image/*")
         }
 
         // Save button
@@ -76,39 +117,40 @@ class AddTransactionActivity : AppCompatActivity() {
             val type = intent.getStringExtra("type") ?: "income"
 
             if (isEditMode && editingTransaction != null) {
-                // Update existing transaction
+                // Update transaction
                 val updated = editingTransaction!!.copy(
                     amount = amount,
                     category = category,
                     description = description,
-                    date = date
+                    date = date,
+                    image = selectedImage
                 )
                 controller.updateTransaction(updated)
                 Toast.makeText(this, getString(R.string.msg_updated), Toast.LENGTH_SHORT).show()
             } else {
-                // Create a new transaction
+                // Create new transaction
                 val newTransaction = TransactionEntity(
                     id = Random().nextInt(100000),
                     amount = amount,
                     category = category,
                     type = type,
                     description = description,
-                    date = date
+                    date = date,
+                    image = selectedImage
                 )
                 controller.addTransaction(newTransaction)
                 Toast.makeText(this, getString(R.string.msg_saved), Toast.LENGTH_SHORT).show()
             }
 
-            finish() // Return to previous screen
+            finish()
         }
 
-        // Back button
         btnBackForm.setOnClickListener {
             finish()
         }
     }
 
-    // Date Picker Dialog
+    // Date Picker
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)

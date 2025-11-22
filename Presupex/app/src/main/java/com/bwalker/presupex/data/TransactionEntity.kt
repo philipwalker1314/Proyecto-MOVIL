@@ -1,11 +1,15 @@
 package com.bwalker.presupex.data
 
+import android.graphics.Bitmap
+
 data class TransactionEntity(
-    val id: Int,              // este es el id de la transaccion
-    val amount: Double,       // monto de la transacción
-    val category: String,     // categoría
-    val type: String,         // ingreso
-    val description: String,  // descrip
-    val date: String          // fecha del
+    val id: Int,
+    val amount: Double,
+    val category: String,
+    val type: String,
+    val description: String,
+    val date: String,
+    val image: Bitmap? = null   // NEW FIELD
 )
+
 
