@@ -1,27 +1,54 @@
+import supabase from "../config/supabase.js";
+
 export default {
-    async getAll(db) {
-        const [rows] = await db.query("SELECT * FROM transactions");
-        return rows;
+    async getAll(userId) {
+        const { data, error } = await supabase
+            .from("transactions")
+            .select("*")
+            .eq("user_id", userId)
+            .order("date", { ascending: false });
+
+        if (error) throw error;
+        return data;
     },
 
-    async create(db, t) {
-        const [result] = await db.query(
-            `INSERT INTO transactions(amount, category, type, description, date, image_url)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [t.amount, t.category, t.type, t.description, t.date, t.image_url]
-        );
-        return result.insertId;
+    async getById(id) {
+        const { data, error } = await supabase
+            .from("transactions")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+        if (error) throw error;
+        return data;
     },
 
-    async update(db, id, t) {
-        await db.query(
-            `UPDATE transactions SET amount=?, category=?, type=?, description=?, date=?, image_url=?
-             WHERE id=?`,
-            [t.amount, t.category, t.type, t.description, t.date, t.image_url, id]
-        );
+    async create(transaction) {
+        const { data, error } = await supabase
+            .from("transactions")
+            .insert(transaction)
+            .select("id")
+            .single();
+
+        if (error) throw error;
+        return data.id;
     },
 
-    async delete(db, id) {
-        await db.query("DELETE FROM transactions WHERE id=?", [id]);
+    async update(id, transaction) {
+        const { error } = await supabase
+            .from("transactions")
+            .update(transaction)
+            .eq("id", id);
+
+        if (error) throw error;
+    },
+
+    async delete(id) {
+        const { error } = await supabase
+            .from("transactions")
+            .delete()
+            .eq("id", id);
+
+        if (error) throw error;
     }
 };

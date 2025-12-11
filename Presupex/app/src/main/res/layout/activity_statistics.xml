@@ -1,44 +1,182 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:padding="20dp">
+    android:background="#FAFAFA">
 
-    <TextView
-        android:id="@+id/tvStatsTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/statistics_title"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="10dp" />
-
-    <ImageView
-        android:id="@+id/chartView"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:src="@mipmap/ic_launcher"
-        android:layout_marginBottom="10dp" />
-
-    <TextView
-        android:id="@+id/tvIncomeStat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/stat_income"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:id="@+id/tvExpenseStat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/stat_expense"
-        android:layout_marginTop="5dp" />
-
-    <Button
-        android:id="@+id/btnBackStats"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/back"
-        android:layout_marginTop="20dp" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvStatsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/statistics_title"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:textColor="#333333" />
+
+        <!-- Balance Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:elevation="4dp"
+            android:padding="20dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Balance"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/tvBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="₡0.00"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/tvTransactionCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 transactions"
+                android:textSize="14sp"
+                android:textColor="#999999"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- Income Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#E8F5E9"
+            android:padding="16dp"
+            android:layout_marginBottom="12dp"
+            android:elevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="💰 Income"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2E7D32" />
+
+                <TextView
+                    android:id="@+id/tvIncomeStat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₡0.00"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2E7D32" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressIncome"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:progressTint="#4CAF50"
+                android:progress="0"
+                android:max="100" />
+        </LinearLayout>
+
+        <!-- Expense Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFEBEE"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp"
+            android:elevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="💸 Expenses"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#C62828" />
+
+                <TextView
+                    android:id="@+id/tvExpenseStat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₡0.00"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#C62828" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressExpense"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:progressTint="#F44336"
+                android:progress="0"
+                android:max="100" />
+        </LinearLayout>
+
+        <!-- Category Breakdown Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📊 Breakdown by Category"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"
+            android:textColor="#333333" />
+
+        <!-- Category Container (dynamically populated) -->
+        <LinearLayout
+            android:id="@+id/categoryContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/btnBackStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/back"
+            android:textAllCaps="false"
+            android:backgroundTint="#90CAF9"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+</ScrollView>
