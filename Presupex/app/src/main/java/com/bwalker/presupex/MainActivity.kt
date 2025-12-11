@@ -79,12 +79,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Logout button
         btnLogout.setOnClickListener {
             showLogoutDialog()
         }
 
-        // Load dashboard values
         updateDashboard()
     }
 
@@ -93,7 +91,6 @@ class MainActivity : AppCompatActivity() {
         updateDashboard()
     }
 
-    // ✅ Actualizado para usar API
     private fun updateDashboard() {
         CoroutineScope(Dispatchers.Main).launch {
             try {

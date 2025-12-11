@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permisos necesarios para la API -->
+    <!-- Permissions required for Presupex to communicate with the API -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -17,7 +17,6 @@
         android:theme="@style/Theme.Presupex"
         android:usesCleartextTraffic="true">
 
-        <!-- Login Activity - LAUNCHER (primera pantalla) -->
         <activity
             android:name=".LoginActivity"
             android:exported="true"
@@ -29,38 +28,38 @@
             </intent-filter>
         </activity>
 
-        <!-- Register Activity -->
+        <!-- Register Activity for Presupex -->
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
             android:label="@string/title_activity_register"
             android:theme="@style/Theme.Presupex" />
 
-        <!-- Main Activity -->
+        <!-- Main dashboard screen of Presupex -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/app_name" />
 
-        <!-- Transaction Recycler Activity -->
+        <!-- Activity for showing transactions with RecyclerView in Presupex -->
         <activity
             android:name=".TransactionRecyclerActivity"
             android:exported="false"
             android:label="@string/title_activity_transaction_recycler" />
 
-        <!-- Statistics Activity -->
+        <!-- Statistics screen for Presupex -->
         <activity
             android:name=".StatisticsActivity"
             android:exported="false"
             android:label="@string/title_activity_statistics" />
 
-        <!-- Add Transaction Activity -->
+        <!-- Activity for adding a new transaction in Presupex -->
         <activity
             android:name=".AddTransactionActivity"
             android:exported="false"
             android:label="@string/title_activity_add_transaction" />
 
-        <!-- Transaction List Activity -->
+        <!-- Screen that lists all transactions in Presupex -->
         <activity
             android:name=".TransactionListActivity"
             android:exported="false"

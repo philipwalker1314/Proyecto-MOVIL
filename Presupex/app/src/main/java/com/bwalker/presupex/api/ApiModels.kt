@@ -81,7 +81,7 @@ data class TransactionResponse(
     val date: String,
     @SerializedName("image_url")
     val imageUrl: String?,
-    @SerializedName("image_base64")  // ✅ NUEVO: Ahora el backend envía esto
+    @SerializedName("image_base64")
     val imageBase64: String?
 )
 

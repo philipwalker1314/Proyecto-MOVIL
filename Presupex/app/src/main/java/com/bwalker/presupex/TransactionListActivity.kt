@@ -43,7 +43,6 @@ class TransactionListActivity : AppCompatActivity() {
         }
     }
 
-    // ✅ Cargar transacciones desde API
     private fun loadTransactions() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
@@ -100,7 +99,6 @@ class TransactionListActivity : AppCompatActivity() {
         builder.show()
     }
 
-    // ✅ Eliminar usando API
     private fun deleteTransaction(id: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             try {

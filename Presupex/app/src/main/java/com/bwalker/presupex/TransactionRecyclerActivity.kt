@@ -33,7 +33,6 @@ class TransactionRecyclerActivity : AppCompatActivity() {
         btnBack.setOnClickListener { finish() }
     }
 
-    // ✅ Cargar desde API
     private fun loadTransactions() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
