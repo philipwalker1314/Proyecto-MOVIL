@@ -1,11 +1,57 @@
 import TransactionModel from "../models/transaction.model.js";
 import supabase from "../config/supabase.js";
 
+// ✅ NUEVA FUNCIÓN: Descargar imagen desde Supabase Storage y convertir a Base64
+async function downloadImageAsBase64(imageUrl) {
+    if (!imageUrl) return null;
+    
+    try {
+        // Extraer el path del archivo de la URL
+        const urlParts = imageUrl.split('/storage/v1/object/public/transactions/');
+        if (urlParts.length < 2) return null;
+        
+        const filePath = urlParts[1];
+        
+        // Descargar la imagen desde Supabase Storage
+        const { data, error } = await supabase.storage
+            .from('transactions')
+            .download(filePath);
+        
+        if (error) {
+            console.error("Error downloading image:", error);
+            return null;
+        }
+        
+        // Convertir el blob a buffer y luego a base64
+        const arrayBuffer = await data.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64 = buffer.toString('base64');
+        
+        return base64;
+    } catch (error) {
+        console.error("Error converting image to base64:", error);
+        return null;
+    }
+}
+
 export const getAll = async (req, res) => {
     try {
         const userId = req.user.id;
-        const data = await TransactionModel.getAll(userId);
-        res.json(data);
+        const transactions = await TransactionModel.getAll(userId);
+        
+        // ✅ Convertir image_url a image_base64 para cada transacción
+        const transactionsWithBase64 = await Promise.all(
+            transactions.map(async (transaction) => {
+                const imageBase64 = await downloadImageAsBase64(transaction.image_url);
+                return {
+                    ...transaction,
+                    image_base64: imageBase64,  // ✅ Agregar campo con base64
+                    image_url: transaction.image_url  // Mantener URL por si acaso
+                };
+            })
+        );
+        
+        res.json(transactionsWithBase64);
     } catch (error) {
         console.error("Get all transactions error:", error);
         res.status(500).json({ error: "Failed to fetch transactions" });

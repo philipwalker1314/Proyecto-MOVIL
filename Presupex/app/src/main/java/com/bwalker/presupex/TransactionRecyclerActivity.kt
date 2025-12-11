@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import android.widget.Button
 import com.bwalker.presupex.adapter.TransactionRecyclerAdapter
 import com.bwalker.presupex.controller.TransactionController
-import com.bwalker.presupex.manager.DataProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class TransactionRecyclerActivity : AppCompatActivity() {
 
@@ -19,14 +21,32 @@ class TransactionRecyclerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transaction_recycler)
 
-        controller = TransactionController(DataProvider.sharedDataManager)
+        controller = TransactionController(this)
 
         recyclerView = findViewById(R.id.recyclerTransactions)
         btnBack = findViewById(R.id.btnBackRecycler)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = TransactionRecyclerAdapter(controller.getAllTransactions())
+
+        loadTransactions()
 
         btnBack.setOnClickListener { finish() }
+    }
+
+    // ✅ Cargar desde API
+    private fun loadTransactions() {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val transactions = controller.getAllTransactions()
+                recyclerView.adapter = TransactionRecyclerAdapter(transactions)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadTransactions()
     }
 }

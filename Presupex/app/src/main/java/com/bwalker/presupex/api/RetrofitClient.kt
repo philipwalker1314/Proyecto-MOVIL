@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "http://:3000/api/"
+    private const val BASE_URL = "https://proyecto-movil-uogz.onrender.com/api/"
 
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {

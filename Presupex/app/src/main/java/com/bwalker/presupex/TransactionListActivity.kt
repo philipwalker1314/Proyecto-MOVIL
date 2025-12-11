@@ -1,5 +1,4 @@
 package com.bwalker.presupex
-import com.bwalker.presupex.manager.DataProvider
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -8,8 +7,11 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.bwalker.presupex.controller.TransactionController
 import com.bwalker.presupex.data.TransactionEntity
-import com.bwalker.presupex.manager.MemoryDataManager
 import com.bwalker.presupex.util.Util
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TransactionListActivity : AppCompatActivity() {
 
@@ -24,43 +26,46 @@ class TransactionListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transaction_list)
 
-        // Link UI components
         listTransactions = findViewById(R.id.listTransactions)
         btnBack = findViewById(R.id.btnBack)
 
-        // Initialize controller
-        controller = TransactionController(DataProvider.sharedDataManager)
+        controller = TransactionController(this) // ✅ Ahora pasa context
 
-        // Load and display all transactions
         loadTransactions()
 
-        // Item click -> show dialog for Edit/Delete
         listTransactions.setOnItemClickListener { _, _, position, _ ->
             val selectedTransaction = transactions[position]
             showActionDialog(selectedTransaction)
         }
 
-        // Back button
         btnBack.setOnClickListener {
             finish()
         }
     }
 
+    // ✅ Cargar transacciones desde API
     private fun loadTransactions() {
-        transactions = controller.getAllTransactions().toMutableList()
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                transactions = controller.getAllTransactions().toMutableList()
 
-        if (transactions.isEmpty()) {
-            Toast.makeText(this, "No transactions available", Toast.LENGTH_SHORT).show()
+                if (transactions.isEmpty()) {
+                    Toast.makeText(this@TransactionListActivity, "No transactions available", Toast.LENGTH_SHORT).show()
+                }
+
+                val items = transactions.map {
+                    val sign = if (it.type == "income") "+" else "-"
+                    val formattedAmount = Util.formatCurrency(it.amount)
+                    "${it.category}: $sign$formattedAmount (${it.date})"
+                }
+
+                adapter = ArrayAdapter(this@TransactionListActivity, android.R.layout.simple_list_item_1, items)
+                listTransactions.adapter = adapter
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this@TransactionListActivity, "Error loading transactions", Toast.LENGTH_SHORT).show()
+            }
         }
-
-        val items = transactions.map {
-            val sign = if (it.type == "income") "+" else "-"
-            val formattedAmount = Util.formatCurrency(it.amount)
-            "${it.category}: $sign$formattedAmount (${it.date})"
-        }
-
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, items)
-        listTransactions.adapter = adapter
     }
 
     private fun showActionDialog(transaction: TransactionEntity) {
@@ -89,30 +94,52 @@ class TransactionListActivity : AppCompatActivity() {
         builder.setTitle("Confirm deletion")
         builder.setMessage("Are you sure you want to delete this transaction?")
         builder.setPositiveButton("Yes") { _, _ ->
-            controller.deleteTransaction(transaction.id)
-            Toast.makeText(this, "Transaction deleted", Toast.LENGTH_SHORT).show()
-            refreshList()
+            deleteTransaction(transaction.id)
         }
         builder.setNegativeButton("No", null)
         builder.show()
     }
 
-    private fun refreshList() {
-        transactions = controller.getAllTransactions().toMutableList()
-        val items = transactions.map {
-            val sign = if (it.type == "income") "+" else "-"
-            val formattedAmount = Util.formatCurrency(it.amount)
-            "${it.category}: $sign$formattedAmount (${it.date})"
+    // ✅ Eliminar usando API
+    private fun deleteTransaction(id: Int) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val success = controller.deleteTransaction(id)
+                if (success) {
+                    Toast.makeText(this@TransactionListActivity, "Transaction deleted", Toast.LENGTH_SHORT).show()
+                    refreshList()
+                } else {
+                    Toast.makeText(this@TransactionListActivity, "Error deleting transaction", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this@TransactionListActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
 
-        adapter.clear()
-        adapter.addAll(items)
-        adapter.notifyDataSetChanged()
+    // ✅ Refrescar lista desde API
+    private fun refreshList() {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                transactions = controller.getAllTransactions().toMutableList()
+                val items = transactions.map {
+                    val sign = if (it.type == "income") "+" else "-"
+                    val formattedAmount = Util.formatCurrency(it.amount)
+                    "${it.category}: $sign$formattedAmount (${it.date})"
+                }
+
+                adapter.clear()
+                adapter.addAll(items)
+                adapter.notifyDataSetChanged()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        // Reload when returning from Add/Edit screen
         refreshList()
     }
 }

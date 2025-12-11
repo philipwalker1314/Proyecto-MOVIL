@@ -2,7 +2,9 @@ package com.bwalker.presupex.api
 
 import com.google.gson.annotations.SerializedName
 
-
+// ============================================
+// REQUEST MODELS (lo que enviamos a la API)
+// ============================================
 
 data class LoginRequest(
     val email: String,
@@ -32,8 +34,6 @@ data class UpdateTransactionRequest(
     val type: String,
     val description: String,
     val date: String,
-    @SerializedName("image_url")
-    val imageUrl: String? = null,
     @SerializedName("image_base64")
     val imageBase64: String? = null
 )
@@ -80,7 +80,9 @@ data class TransactionResponse(
     val description: String,
     val date: String,
     @SerializedName("image_url")
-    val imageUrl: String?
+    val imageUrl: String?,
+    @SerializedName("image_base64")  // ✅ NUEVO: Ahora el backend envía esto
+    val imageBase64: String?
 )
 
 data class TotalsResponse(

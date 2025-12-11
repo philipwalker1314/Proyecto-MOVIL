@@ -6,11 +6,13 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bwalker.presupex.controller.TransactionController
-import com.bwalker.presupex.manager.DataProvider
 import com.bwalker.presupex.util.Util
 import android.widget.LinearLayout
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class StatisticsActivity : AppCompatActivity() {
 
@@ -29,7 +31,7 @@ class StatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_statistics)
 
-        controller = TransactionController(DataProvider.sharedDataManager)
+        controller = TransactionController(this) // ✅ Ahora pasa context
 
         tvIncomeStat = findViewById(R.id.tvIncomeStat)
         tvExpenseStat = findViewById(R.id.tvExpenseStat)
@@ -53,37 +55,41 @@ class StatisticsActivity : AppCompatActivity() {
         loadStatistics()
     }
 
+    // ✅ Cargar desde API
     private fun loadStatistics() {
-        val totalIncome = controller.getTotalIngresos()
-        val totalExpenses = controller.getTotalGastos()
-        val balance = controller.getBalance()
-        val transactions = controller.getAllTransactions()
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val (totalIncome, totalExpenses, balance) = controller.getTotals()
+                val transactions = controller.getAllTransactions()
 
-        // Display totals
-        tvIncomeStat.text = Util.formatCurrency(totalIncome)
-        tvExpenseStat.text = Util.formatCurrency(totalExpenses)
-        tvBalance.text = Util.formatCurrency(balance)
-        tvTransactionCount.text = "${transactions.size} transactions"
+                // Display totals
+                tvIncomeStat.text = Util.formatCurrency(totalIncome)
+                tvExpenseStat.text = Util.formatCurrency(totalExpenses)
+                tvBalance.text = Util.formatCurrency(balance)
+                tvTransactionCount.text = "${transactions.size} transactions"
 
-        // Set balance color
-        tvBalance.setTextColor(
-            if (balance >= 0) Color.parseColor("#4CAF50")
-            else Color.parseColor("#F44336")
-        )
+                // Set balance color
+                tvBalance.setTextColor(
+                    if (balance >= 0) Color.parseColor("#4CAF50")
+                    else Color.parseColor("#F44336")
+                )
 
-        // Calculate progress bars
-        val maxAmount = maxOf(totalIncome, totalExpenses, 1.0)
-        progressIncome.progress = ((totalIncome / maxAmount) * 100).toInt()
-        progressExpense.progress = ((totalExpenses / maxAmount) * 100).toInt()
+                // Calculate progress bars
+                val maxAmount = maxOf(totalIncome, totalExpenses, 1.0)
+                progressIncome.progress = ((totalIncome / maxAmount) * 100).toInt()
+                progressExpense.progress = ((totalExpenses / maxAmount) * 100).toInt()
 
-        // Show category breakdown
-        displayCategoryBreakdown(transactions)
+                // Show category breakdown
+                displayCategoryBreakdown(transactions)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun displayCategoryBreakdown(transactions: List<com.bwalker.presupex.data.TransactionEntity>) {
         categoryContainer.removeAllViews()
 
-        // Group by category and calculate totals
         val categoryTotals = transactions
             .groupBy { it.category }
             .mapValues { entry -> entry.value.sumOf { it.amount } }
@@ -106,7 +112,6 @@ class StatisticsActivity : AppCompatActivity() {
         categoryTotals.forEach { (category, amount) ->
             val percentage = if (totalAmount > 0) (amount / totalAmount * 100).toInt() else 0
 
-            // Create category row
             val categoryRow = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(
@@ -119,7 +124,6 @@ class StatisticsActivity : AppCompatActivity() {
                 setBackgroundColor(Color.parseColor("#F5F5F5"))
             }
 
-            // Category name
             val categoryName = TextView(this).apply {
                 text = category
                 textSize = 16f
@@ -131,7 +135,6 @@ class StatisticsActivity : AppCompatActivity() {
                 )
             }
 
-            // Amount and percentage
             val categoryAmount = TextView(this).apply {
                 text = "${Util.formatCurrency(amount)} ($percentage%)"
                 textSize = 16f
