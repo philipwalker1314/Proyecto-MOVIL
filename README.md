@@ -1,7 +1,8 @@
 # Proyecto-INTEGRADOR-II
-# Presupex
+# Presupex API
+https://www.postman.com/joint-operations-cosmologist-70020930/presupex/collection/qqktb6u/presupex-api?action=share&creator=40082090
 
-### Descripción general
+### Descripción general 
 Presupex es una aplicación para llevar el control de gastos e ingresos personales.  
 La idea es que el usuario pueda ver cuánto dinero entra y sale, además de tener un balance claro y gráficos que le ayuden a entender sus finanzas.
 
