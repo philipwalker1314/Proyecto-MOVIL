@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.util.*
 
 class AddTransactionActivity : AppCompatActivity() {
@@ -46,7 +47,7 @@ class AddTransactionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_transaction)
 
-        controller = TransactionController(this) // ✅ Ahora pasa context
+        controller = TransactionController(this)
 
         // Link UI components
         etAmount = findViewById(R.id.etAmount)
@@ -90,7 +91,7 @@ class AddTransactionActivity : AppCompatActivity() {
         }
     }
 
-    // ✅ Cargar transacción para editar
+    // Load transaction data for editing
     private fun loadTransactionForEdit(transactionId: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
@@ -100,7 +101,10 @@ class AddTransactionActivity : AppCompatActivity() {
                 editingTransaction?.let { t ->
                     etAmount.setText(t.amount.toString())
                     etDescription.setText(t.description)
-                    etDate.setText(t.date)
+
+                    // Convert date from ISO format to display format (DD/MM/YYYY)
+                    val displayDate = convertISOToDisplayFormat(t.date)
+                    etDate.setText(displayDate)
 
                     val categories = arrayOf("Salary", "Food", "Entertainment", "Transport", "Other")
                     val index = categories.indexOf(t.category)
@@ -119,10 +123,10 @@ class AddTransactionActivity : AppCompatActivity() {
     private fun saveTransaction(isEditMode: Boolean) {
         val amountText = etAmount.text.toString().trim()
         val category = spCategory.selectedItem.toString()
-        val date = etDate.text.toString().trim()
+        val dateDisplay = etDate.text.toString().trim()
         val description = etDescription.text.toString().trim()
 
-        if (amountText.isEmpty() || description.isEmpty() || date.isEmpty()) {
+        if (amountText.isEmpty() || description.isEmpty() || dateDisplay.isEmpty()) {
             Toast.makeText(this, getString(R.string.msg_fill_fields), Toast.LENGTH_SHORT).show()
             return
         }
@@ -130,6 +134,13 @@ class AddTransactionActivity : AppCompatActivity() {
         val amount = amountText.toDoubleOrNull()
         if (amount == null || amount < 0) {
             Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Convert date to ISO format before sending to server
+        val dateISO = convertDisplayToISOFormat(dateDisplay)
+        if (dateISO.isEmpty()) {
+            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -141,24 +152,24 @@ class AddTransactionActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val success = if (isEditMode && editingTransaction != null) {
-                    // Update
+                    // Update existing transaction
                     val updated = editingTransaction!!.copy(
                         amount = amount,
                         category = category,
                         description = description,
-                        date = date,
+                        date = dateISO, // Use ISO format for database
                         image = selectedImage
                     )
                     controller.updateTransaction(updated)
                 } else {
-                    // Create new
+                    // Create new transaction
                     val newTransaction = TransactionEntity(
-                        id = 0, // El servidor asignará el ID
+                        id = 0,
                         amount = amount,
                         category = category,
                         type = type,
                         description = description,
-                        date = date,
+                        date = dateISO, // Use ISO format for database
                         image = selectedImage
                     )
                     controller.addTransaction(newTransaction)
@@ -198,11 +209,52 @@ class AddTransactionActivity : AppCompatActivity() {
         val dialog = DatePickerDialog(
             this,
             { _, y, m, d ->
+                // Display user-friendly format (DD/MM/YYYY)
                 val formattedDate = String.format("%02d/%02d/%04d", d, m + 1, y)
                 etDate.setText(formattedDate)
             },
             year, month, day
         )
         dialog.show()
+    }
+
+    /**
+     * Converts date from display format (DD/MM/YYYY) to ISO format (YYYY-MM-DD)
+     * Example: "13/12/2025" -> "2025-12-13"
+     */
+    private fun convertDisplayToISOFormat(dateStr: String): String {
+        return try {
+            val displayFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val isoFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val date = displayFormat.parse(dateStr)
+            if (date != null) {
+                isoFormat.format(date)
+            } else {
+                ""
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
+    /**
+     * Converts date from ISO format (YYYY-MM-DD) to display format (DD/MM/YYYY)
+     * Example: "2025-12-13" -> "13/12/2025"
+     */
+    private fun convertISOToDisplayFormat(dateStr: String): String {
+        return try {
+            val isoFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val displayFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = isoFormat.parse(dateStr)
+            if (date != null) {
+                displayFormat.format(date)
+            } else {
+                dateStr
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            dateStr
+        }
     }
 }
