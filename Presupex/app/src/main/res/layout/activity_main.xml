@@ -131,6 +131,7 @@
         android:layout_marginTop="10dp"
         android:textAllCaps="false" />
 
+    <!-- View Photo History Button -->
     <Button
         android:id="@+id/btnViewPhotoHistory"
         android:layout_width="match_parent"
@@ -140,6 +141,15 @@
         android:backgroundTint="#4FC3F7"
         android:textAllCaps="false" />
 
-
+    <!-- NUEVO: Logout Button -->
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:backgroundTint="#F44336"
+        android:layout_marginTop="20dp"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
 
 </LinearLayout>

@@ -54,6 +54,37 @@
     <string name="no">No</string>
     <string name="view_photo_history">View Photo History</string>
     <string name="title_activity_transaction_recycler">TransactionRecyclerActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+
+    <string name="login_label">Login</string>
+    <string name="register_label">Register</string>
+
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="logout">Logout</string>
+
+    <!-- Login Screen -->
+    <string name="login_subtitle">Sign in to continue</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="register_here">Register here</string>
+
+    <!-- Register Screen -->
+    <string name="create_account">Create Account</string>
+    <string name="register_subtitle">Fill in the details to get started</string>
+    <string name="hint_full_name">Full Name</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="login_here">Login here</string>
+
+    <!-- Auth Messages -->
+    <string name="welcome_message">Welcome %s!</string>
+    <string name="login_error">Invalid email or password</string>
+    <string name="register_error">Registration failed</string>
+    <string name="network_error">Network error. Please check your connection.</string>
+    <string name="logging_out">Logging out...</string>
 
 
 </resources>
